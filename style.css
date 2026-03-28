@@ -28,19 +28,33 @@ input {
 }
 
 .game-box {
+  position: relative;
   background: #111827;
   border-radius: 20px;
-  padding: 50px;
   margin: 20px auto;
-  width: 80%;
+  width: 90%;
+  max-width: 800px;
+  height: 300px;
+  overflow: hidden;
   box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
 }
 
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 #multiplier {
-  font-size: 70px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
   font-weight: bold;
   color: #00ff9f;
   text-shadow: 0 0 20px #00ff9f;
+  z-index: 2;
 }
 
 .controls {
@@ -54,7 +68,6 @@ button {
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  transition: 0.3s;
 }
 
 .bet-btn {
@@ -62,38 +75,7 @@ button {
   color: white;
 }
 
-.bet-btn:hover {
-  background: #0056b3;
-}
-
 .cash-btn {
   background: #00c853;
   color: white;
-}
-
-.cash-btn:hover {
-  background: #009624;
-  }
-.game-box {
-  position: relative;
-  background: #111827;
-  border-radius: 20px;
-  padding: 50px;
-  margin: 20px auto;
-  width: 80%;
-  height: 300px;
-  box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
-}
-
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-#multiplier {
-  position: relative;
-  z-index: 2;
 }
