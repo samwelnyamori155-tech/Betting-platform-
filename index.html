@@ -20,9 +20,18 @@
     </div>
 
     <div class="controls">
-      <button class="bet-btn" onclick="placeBet()">Place Bet</button>
-      <button class="cash-btn" onclick="cashOut()">Cash Out</button>
-    </div>
+  <button class="bet-btn" onclick="placeBet()">Place Bet</button>
+  <button class="cash-btn" onclick="cashOut()">Cash Out</button>
+</div>
+
+<div class="history">
+  <h3>History</h3>
+  <div id="historyList"></div>
+</div>
+
+<audio id="tickSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<audio id="crashSound" src="https://www.soundjay.com/explosion/explosion-01.wav"></audio>
+<audio id="cashSound" src="https://www.soundjay.com/button/button-3.wav"></audio>
   </div>
 
   <script src="script.js"></script>
