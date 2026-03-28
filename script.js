@@ -6,11 +6,16 @@ let crashPoint = 0;
 let gameRunning = false;
 let interval;
 
-// Canvas setup
+// Canvas
 const canvas = document.getElementById("graphCanvas");
 const ctx = canvas.getContext("2d");
 
-// Resize canvas to fit container
+// Sounds
+const tickSound = document.getElementById("tickSound");
+const crashSound = document.getElementById("crashSound");
+const cashSound = document.getElementById("cashSound");
+
+// Resize canvas
 function resizeCanvas() {
   canvas.width = canvas.parentElement.clientWidth;
   canvas.height = canvas.parentElement.clientHeight;
@@ -19,6 +24,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 let time = 0;
+let history = [];
 
 // Draw graph
 function drawGraph() {
@@ -30,13 +36,34 @@ function drawGraph() {
   for (let i = 0; i <= time; i++) {
     let x = i * 5;
     let y = canvas.height - Math.pow(1.05, i) * 5;
-
     ctx.lineTo(x, y);
   }
 
   ctx.strokeStyle = gameRunning ? "#00ff9f" : "red";
   ctx.lineWidth = 3;
   ctx.stroke();
+}
+
+// Update history UI
+function updateHistory(value) {
+  history.unshift(value.toFixed(2) + "x");
+
+  if (history.length > 10) history.pop();
+
+  let container = document.getElementById("historyList");
+  container.innerHTML = "";
+
+  history.forEach(item => {
+    let div = document.createElement("div");
+    div.className = "history-item";
+    div.innerText = item;
+    container.appendChild(div);
+  });
+}
+
+// Fake multiplayer players
+function fakePlayers() {
+  console.log("👥 Players betting...");
 }
 
 // Start game
@@ -53,12 +80,13 @@ function placeBet() {
   balance -= bet;
   document.getElementById("balance").innerText = "Balance: " + balance;
 
-  // Reset
   currentMultiplier = 1;
   time = 0;
   gameRunning = true;
 
-  crashPoint = Math.random() * 5 + 1; // 1x–6x
+  crashPoint = Math.random() * 5 + 1;
+
+  fakePlayers();
 
   interval = setInterval(() => {
     time++;
@@ -68,6 +96,10 @@ function placeBet() {
       currentMultiplier.toFixed(2) + "x";
 
     drawGraph();
+
+    // play ticking sound
+    tickSound.currentTime = 0;
+    tickSound.play();
 
     if (currentMultiplier >= crashPoint) {
       crashGame();
@@ -83,6 +115,10 @@ function crashGame() {
 
   document.getElementById("multiplier").innerText = "CRASH 💥";
   document.getElementById("multiplier").style.color = "red";
+
+  crashSound.play();
+
+  updateHistory(currentMultiplier);
 
   drawGraph();
 
@@ -104,5 +140,9 @@ function cashOut() {
 
   document.getElementById("balance").innerText = "Balance: " + balance;
 
+  cashSound.play();
+
+  updateHistory(currentMultiplier);
+
   alert("Cashed out at " + currentMultiplier.toFixed(2) + "x");
-}
+    }
