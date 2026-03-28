@@ -94,3 +94,26 @@ function cashOut() {
 
   alert("✅ Cashed out at " + currentMultiplier.toFixed(2) + "x");
 }
+interval = setInterval(() => {
+  currentMultiplier += 0.03;
+
+  let display = document.getElementById("multiplier");
+  display.innerText = currentMultiplier.toFixed(2) + "x";
+
+  // Glow effect increases
+  display.style.textShadow = `0 0 ${currentMultiplier * 5}px #00ff9f`;
+
+  if (currentMultiplier >= crashPoint) {
+    clearInterval(interval);
+    gameRunning = false;
+
+    display.style.color = "red";
+    display.innerText = "CRASH 💥";
+
+    setTimeout(() => {
+      display.style.color = "#00ff9f";
+      display.innerText = "1.00x";
+    }, 2000);
+  }
+
+}, 100);
