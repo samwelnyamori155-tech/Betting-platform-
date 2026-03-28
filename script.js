@@ -1,40 +1,45 @@
 let balance = 1000;
-let currentMultiplier = 1;
-let gameRunning = false;
-let crashPoint = 0;
-let interval;
-
-function placeBet() {
-  if (gameRunning) return;
-
-  gameRunning = true;
-  currentMultiplier = 1;
-
-  // Random crash between 1x and 10x
-  crashPoint = (Math.random() * 9 + 1).toFixed(2);
-
-  interval = setInterval(() => {
-    currentMultiplier += 0.05;
-
-    document.getElementById("multiplier").innerText =
-      currentMultiplier.toFixed(2) + "x";
-
-    if (currentMultiplier >= crashPoint) {
-      clearInterval(interval);
-      gameRunning = false;
-      alert("💥 Crashed at " + crashPoint + "x");
-    }
-
-  }, 100);
-}
-
-function cashOut() {
-  if (!gameRunning) return;
-
-  clearInterval(interval);
-  gameRunning = false;
 let bet = 0;
 
+let currentMultiplier = 1;
+let crashPoint = 0;
+let gameRunning = false;
+let interval;
+
+// Canvas setup
+const canvas = document.getElementById("graphCanvas");
+const ctx = canvas.getContext("2d");
+
+// Resize canvas to fit container
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let time = 0;
+
+// Draw graph
+function drawGraph() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  for (let i = 0; i <= time; i++) {
+    let x = i * 5;
+    let y = canvas.height - Math.pow(1.05, i) * 5;
+
+    ctx.lineTo(x, y);
+  }
+
+  ctx.strokeStyle = gameRunning ? "#00ff9f" : "red";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+// Start game
 function placeBet() {
   if (gameRunning) return;
 
@@ -48,26 +53,46 @@ function placeBet() {
   balance -= bet;
   document.getElementById("balance").innerText = "Balance: " + balance;
 
-  gameRunning = true;
+  // Reset
   currentMultiplier = 1;
+  time = 0;
+  gameRunning = true;
 
-  crashPoint = (Math.random() * 9 + 1).toFixed(2);
+  crashPoint = Math.random() * 5 + 1; // 1x–6x
 
   interval = setInterval(() => {
-    currentMultiplier += 0.05;
+    time++;
+    currentMultiplier = Math.pow(1.05, time);
 
     document.getElementById("multiplier").innerText =
       currentMultiplier.toFixed(2) + "x";
 
+    drawGraph();
+
     if (currentMultiplier >= crashPoint) {
-      clearInterval(interval);
-      gameRunning = false;
-      alert("💥 Crashed at " + crashPoint + "x");
+      crashGame();
     }
 
   }, 100);
 }
 
+// Crash
+function crashGame() {
+  clearInterval(interval);
+  gameRunning = false;
+
+  document.getElementById("multiplier").innerText = "CRASH 💥";
+  document.getElementById("multiplier").style.color = "red";
+
+  drawGraph();
+
+  setTimeout(() => {
+    document.getElementById("multiplier").innerText = "1.00x";
+    document.getElementById("multiplier").style.color = "#00ff9f";
+  }, 2000);
+}
+
+// Cash out
 function cashOut() {
   if (!gameRunning) return;
 
@@ -77,66 +102,7 @@ function cashOut() {
   let win = Math.floor(bet * currentMultiplier);
   balance += win;
 
-  document.getElementById("balance").innerText =
-    "Balance: " + balance;
+  document.getElementById("balance").innerText = "Balance: " + balance;
 
-  alert("✅ Cashed out at " + currentMultiplier.toFixed(2) + "x");
+  alert("Cashed out at " + currentMultiplier.toFixed(2) + "x");
 }
-
-
-  
-
-  let win = Math.floor(currentMultiplier * 10);
-  balance += win;
-
-  document.getElementById("balance").innerText =
-    "Balance: " + balance;
-
-  alert("✅ Cashed out at " + currentMultiplier.toFixed(2) + "x");
-}
-interval = setInterval(() => {
-  currentMultiplier += 0.03;
-
-  let display = document.getElementById("multiplier");
-  display.innerText = currentMultiplier.toFixed(2) + "x";
-
-  // Glow effect increases
-  display.style.textShadow = `0 0 ${currentMultiplier * 5}px #00ff9f`;
-
-  if (currentMultiplier >= crashPoint) {
-    clearInterval(interval);
-    gameRunning = false;
-
-    display.style.color = "red";
-    display.innerText = "CRASH 💥";
-
-    setTimeout(() => {
-      display.style.color = "#00ff9f";
-      display.innerText = "1.00x";
-    }, 2000);
-  }
-
-}, 100);
-function drawGraph() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.beginPath();
-  ctx.moveTo(0, canvas.height);
-
-  for (let i = 0; i < points.length; i++) {
-    let x = i * 5;
-    let y = canvas.height - (points[i] * 20);
-
-    ctx.lineTo(x, y);
-  }
-
-  ctx.strokeStyle = "#00ff9f";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-}
-points.push(currentMultiplier);
-drawGraph();
-points = [];
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-ctx.strokeStyle = "red";
-drawGraph();
