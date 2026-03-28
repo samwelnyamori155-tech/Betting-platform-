@@ -117,3 +117,26 @@ interval = setInterval(() => {
   }
 
 }, 100);
+function drawGraph() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+
+  for (let i = 0; i < points.length; i++) {
+    let x = i * 5;
+    let y = canvas.height - (points[i] * 20);
+
+    ctx.lineTo(x, y);
+  }
+
+  ctx.strokeStyle = "#00ff9f";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+points.push(currentMultiplier);
+drawGraph();
+points = [];
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.strokeStyle = "red";
+drawGraph();
